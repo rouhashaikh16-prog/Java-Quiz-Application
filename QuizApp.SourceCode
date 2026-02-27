@@ -1,0 +1,273 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Question {
+    private String questionText;   
+    private String[] options;      
+    private int correctAnswer;     
+
+    // to set all questions
+    public Question(String questionText, String[] options, int correctAnswer) {
+        this.questionText = questionText;
+        this.options = options;
+        this.correctAnswer = correctAnswer;
+    }
+
+    // to display the questions and options
+    public void display(int questionNumber) {
+        System.out.println("Q" + questionNumber + ": " + questionText);
+
+        // Print each option with a label A, B, C, D
+        char label = 'A';
+        for (String option : options) {
+            System.out.println("  " + label + ") " + option);
+            label++;
+        }
+    }
+
+    // Check if the user has given correct answer
+    public boolean isCorrect(int userAnswer) {
+        return userAnswer == correctAnswer;
+    }
+
+    // Return the correct answer A, B, C, D
+    public char getCorrectAnswerLabel() {
+        return (char) ('A' + correctAnswer);
+    }
+
+    // Return the correct answer text
+    public String getCorrectAnswerText() {
+        return options[correctAnswer];
+    }
+}
+
+class Quiz {
+    private List<Question> questions; 
+    private int score;                
+    private int totalQuestions;       
+
+    public Quiz() {
+        questions = new ArrayList<>();
+        score = 0;
+    }
+
+    public void addQuestion(Question q) {
+        questions.add(q);
+        totalQuestions = questions.size();
+    }
+
+    // Indication to start the quiz
+    public void start(Scanner scanner) {
+        System.out.println("\n---------------------------------------");
+        System.out.println("          WELCOME TO THE QUIZ!          ");
+        System.out.println("---------------------------------------");
+        System.out.println("  Total Questions: " + totalQuestions);
+        System.out.println("  Type A, B, C, or D to answer.\n");
+
+        // Store results
+        boolean[] results = new boolean[totalQuestions];
+
+        for (int i = 0; i < totalQuestions; i++) {
+            Question current = questions.get(i);
+
+            // Display question number and options
+            current.display(i + 1);
+
+            // Answer from user
+            int userAnswerIndex = getUserAnswer(scanner);
+
+            if (current.isCorrect(userAnswerIndex)) {
+                System.out.println("  ✅ Correct!");
+                score++;
+                results[i] = true;
+            } else {
+                System.out.println("  ❌ Wrong! Correct answer: "
+                        + current.getCorrectAnswerLabel()
+                        + ") " + current.getCorrectAnswerText());
+                results[i] = false;
+            }
+        }
+
+        showSummary(results);
+    }
+
+    private int getUserAnswer(Scanner scanner) {
+        while (true) {
+            System.out.print("\n  Your Answer: ");
+            String input = scanner.nextLine().trim().toUpperCase();
+
+            // Answer in A, B, C, or D
+            if (input.equals("A")) return 0;
+            if (input.equals("B")) return 1;
+            if (input.equals("C")) return 2;
+            if (input.equals("D")) return 3;
+
+            System.out.println("  ⚠️  Invalid input! Please enter A, B, C, or D.");
+        }
+    }
+
+    private void showSummary(boolean[] results) {
+        System.out.println("\n---------------------------------------");
+        System.out.println("              QUIZ SUMMARY               ");
+        System.out.println("---------------------------------------");
+
+        // each question's result
+        for (int i = 0; i < totalQuestions; i++) {
+            String status = results[i] ? "✅ Correct" : "❌ Wrong";
+            System.out.println("  Q" + (i + 1) + ": " + status);
+        }
+
+        // result in percentage 
+        double percentage = ((double) score / totalQuestions) * 100;
+
+        System.out.println("\n-------------------------------------");
+        System.out.printf("  Score: %d / %d (%.1f%%)%n", score, totalQuestions, percentage);
+        System.out.println("-------------------------------------");
+
+        System.out.println("  " + getPerformanceMessage(percentage));
+        System.out.println("-------------------------------------\n");
+    }
+
+    private String getPerformanceMessage(double percentage) {
+        if (percentage == 100) return "🏆 Perfect Score! Outstanding!";
+        if (percentage >= 80)  return "🌟 Excellent work! Keep it up!";
+        if (percentage >= 60)  return "👍 Good job! Room to improve.";
+        if (percentage >= 40)  return "📚 Keep studying, you'll get there!";
+        return "💪 Don't give up! Practice makes perfect!";
+    }
+}
+
+public class QuizApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Quiz quiz = new Quiz();
+
+        quiz.addQuestion(new Question(
+            "What is the size of an int in Java?",
+            new String[]{"8 bytes", "2 bytes", "4 bytes", "16 bytes"},
+            2  // C) 4 bytes
+        ));
+
+        quiz.addQuestion(new Question(
+            "Which keyword is used to create an object in Java?",
+            new String[]{"create", "object", "build", "new"},
+            3  // D) new
+        ));
+
+        quiz.addQuestion(new Question(
+            "Which of these is NOT a primitive data type in Java?",
+            new String[]{"int", "boolean", "String", "char"},
+            2  // C) String
+        ));
+
+        quiz.addQuestion(new Question(
+            "What does OOP stand for?",
+            new String[]{"Object Oriented Programming",
+                         "Open Office Protocol",
+                         "Optimized Output Procedure",
+                         "Ordered Object Process"},
+            0  // A) Object Oriented Programming
+        ));
+
+        quiz.addQuestion(new Question(
+            "Which method is the entry point of a Java program?",
+            new String[]{"start()", "run()", "main()", "init()"},
+            2  // C) main()
+        ));
+
+        quiz.addQuestion(new Question(
+            "Which collection allows duplicate elements?",
+            new String[]{"Set", "Map", "List", "HashSet"},
+            2  // C) List
+        ));
+
+        quiz.addQuestion(new Question(
+            "What is the output of: System.out.println(10 % 3)?",
+            new String[]{"3", "1", "0", "2"},
+            1  // B) 1
+        ));
+
+        quiz.addQuestion(new Question(
+            "Which access modifier makes a member visible everywhere?",
+            new String[]{"private", "protected", "default", "public"},
+            3  // D) public
+        ));
+        
+        quiz.addQuestion(new Question(
+        	    "Which keyword is used to inherit a class in Java?",
+        	    new String[]{"implement", "extends", "inherits", "instanceof"},
+        	    1  // B) extends
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "Which of these is a loop structure in Java?",
+        	    new String[]{"repeat", "foreach", "loop", "iterate"},
+        	    1  // B) foreach
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "Which exception occurs when dividing a number by zero?",
+        	    new String[]{"NullPointerException", "ArithmeticException", "IOException", "NumberFormatException"},
+        	    1  // B) ArithmeticException
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "Which keyword is used to prevent method overriding?",
+        	    new String[]{"static", "final", "const", "abstract"},
+        	    1  // B) final
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "Which data type is used to store true or false values?",
+        	    new String[]{"int", "String", "boolean", "char"},
+        	    2  // C) boolean
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "Which interface is implemented by ArrayList?",
+        	    new String[]{"Set", "List", "Map", "Queue"},
+        	    1  // B) List
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "What is the default value of an instance int variable?",
+        	    new String[]{"0", "null", "1", "undefined"},
+        	    0  // A) 0
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "Which keyword is used to handle exceptions?",
+        	    new String[]{"catch", "handle", "error", "throw"},
+        	    0  // A) catch
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "Which operator is used for logical AND?",
+        	    new String[]{"&&", "||", "!", "&"},
+        	    0  // A) &&
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "Which method is used to compare two strings in Java?",
+        	    new String[]{"==", "compare()", "equals()", "equalsIgnoreCaseOnly()"},
+        	    2  // C) equals()
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "Which keyword is used to define a constant variable?",
+        	    new String[]{"static", "final", "const", "immutable"},
+        	    1  // B) final
+        	));
+
+        quiz.addQuestion(new Question(
+        	    "Which package contains the Scanner class?",
+        	    new String[]{"java.io", "java.util", "java.lang", "java.text"},
+        	    1  // B) java.util
+        	));
+
+        quiz.start(scanner);
+
+        scanner.close();
+    }
+}
