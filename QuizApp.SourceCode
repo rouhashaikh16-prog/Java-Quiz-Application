@@ -7,18 +7,15 @@ class Question {
     private String[] options;      
     private int correctAnswer;     
 
-    // to set all questions
     public Question(String questionText, String[] options, int correctAnswer) {
         this.questionText = questionText;
         this.options = options;
         this.correctAnswer = correctAnswer;
     }
 
-    // to display the questions and options
     public void display(int questionNumber) {
         System.out.println("Q" + questionNumber + ": " + questionText);
 
-        // Print each option with a label A, B, C, D
         char label = 'A';
         for (String option : options) {
             System.out.println("  " + label + ") " + option);
@@ -26,17 +23,14 @@ class Question {
         }
     }
 
-    // Check if the user has given correct answer
     public boolean isCorrect(int userAnswer) {
         return userAnswer == correctAnswer;
     }
 
-    // Return the correct answer A, B, C, D
     public char getCorrectAnswerLabel() {
         return (char) ('A' + correctAnswer);
     }
 
-    // Return the correct answer text
     public String getCorrectAnswerText() {
         return options[correctAnswer];
     }
@@ -57,7 +51,6 @@ class Quiz {
         totalQuestions = questions.size();
     }
 
-    // Indication to start the quiz
     public void start(Scanner scanner) {
         System.out.println("\n---------------------------------------");
         System.out.println("          WELCOME TO THE QUIZ!          ");
@@ -65,16 +58,13 @@ class Quiz {
         System.out.println("  Total Questions: " + totalQuestions);
         System.out.println("  Type A, B, C, or D to answer.\n");
 
-        // Store results
         boolean[] results = new boolean[totalQuestions];
 
         for (int i = 0; i < totalQuestions; i++) {
             Question current = questions.get(i);
 
-            // Display question number and options
             current.display(i + 1);
 
-            // Answer from user
             int userAnswerIndex = getUserAnswer(scanner);
 
             if (current.isCorrect(userAnswerIndex)) {
@@ -97,7 +87,6 @@ class Quiz {
             System.out.print("\n  Your Answer: ");
             String input = scanner.nextLine().trim().toUpperCase();
 
-            // Answer in A, B, C, or D
             if (input.equals("A")) return 0;
             if (input.equals("B")) return 1;
             if (input.equals("C")) return 2;
@@ -112,13 +101,11 @@ class Quiz {
         System.out.println("              QUIZ SUMMARY               ");
         System.out.println("---------------------------------------");
 
-        // each question's result
         for (int i = 0; i < totalQuestions; i++) {
             String status = results[i] ? "✅ Correct" : "❌ Wrong";
             System.out.println("  Q" + (i + 1) + ": " + status);
         }
 
-        // result in percentage 
         double percentage = ((double) score / totalQuestions) * 100;
 
         System.out.println("\n-------------------------------------");
@@ -130,10 +117,10 @@ class Quiz {
     }
 
     private String getPerformanceMessage(double percentage) {
-        if (percentage == 100) return "🏆 Perfect Score! Outstanding!";
-        if (percentage >= 80)  return "🌟 Excellent work! Keep it up!";
-        if (percentage >= 60)  return "👍 Good job! Room to improve.";
-        if (percentage >= 40)  return "📚 Keep studying, you'll get there!";
+        if (percentage == 100) return "Perfect Score! Outstanding!";
+        if (percentage >= 80)  return "Excellent work!";
+        if (percentage >= 60)  return "Nice! Room to improve.";
+        if (percentage >= 40)  return "You need to study!";
         return "💪 Don't give up! Practice makes perfect!";
     }
 }
